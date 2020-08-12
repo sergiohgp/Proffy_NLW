@@ -1,8 +1,9 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 
-import backIcon from '../../assets/images/icons/back.svg'
-import logoImg from '../../assets/images/logo.svg'
+import PageHeader from '../../components/PageHeader'
+import TeacherItem from '../../components/TeacherItem'
+
+
 
 import './styles.css'
 
@@ -10,18 +11,33 @@ import './styles.css'
 function TeacherList() {
     return (
         <div id="page-teacher-list" className="container">
-            <header className="page-header">
-                <div className="top-bar-container">
-                    <Link to="/">
-                        <img src={backIcon} alt="" />
-                    </Link>
-                    <img src={logoImg} alt="" />
-                </div>
+            <PageHeader title="Available Proffys.">
+                <form id="search-teachers">
+                    <div className="input-block">
+                        <label htmlFor="subject">Subject</label>
+                        <input type="text" id="subject" />
+                    </div>
 
-                <div className="header-content">
-                    <strong>Available Proffys.</strong>
-                </div>
-            </header>
+                    <div className="input-block">
+                        <label htmlFor="week-day">Week day</label>
+                        <input type="text" id="week-day" />
+                    </div>
+
+                    <div className="input-block">
+                        <label htmlFor="time">Time</label>
+                        <input type="text" id="time" />
+                    </div>
+                </form>
+
+            </PageHeader>
+
+            <main>
+                <TeacherItem />
+                <TeacherItem />
+                <TeacherItem />
+                <TeacherItem />
+
+            </main>
         </div>
     )
 }

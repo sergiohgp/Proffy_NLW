@@ -1,4 +1,5 @@
 import React, { useState, FormEvent } from 'react'
+import { useHistory } from 'react-router-dom'
 
 import PageHeader from '../../components/PageHeader'
 
@@ -8,8 +9,11 @@ import Input from '../../components/Input'
 import warningIcon from '../../assets/images/icons/warning.svg'
 import Textarea from '../../components/Textarea'
 import Select from '../../components/Select'
+import api from '../../services/api'
 
 function TeacherFrom() {
+    const history = useHistory()
+
     const [scheduleItems, setScheduleItems] = useState([
         { week_day: 0, from: '', to: '' }
     ])
@@ -24,6 +28,22 @@ function TeacherFrom() {
 
     function handdleCreateClass(e: FormEvent) {
         e.preventDefault()
+
+        api.post('classes', {
+            name,
+            avatar,
+            whatsapp,
+            bio,
+            subject,
+            cost: Number(cost),
+            schedule: scheduleItems
+        }).then(() => {
+            alert('Success to register!')
+
+            history.push('/')
+        }).catch(() => {
+            alert('Error to register!')
+        })
 
         console.log({
             name,
@@ -44,6 +64,18 @@ function TeacherFrom() {
             newScheduleItem
         ])
 
+    }
+
+    function setScheduleItemValue(position: number, field: string, value: string) {
+        const updatedScheduleItems = scheduleItems.map((scheduleItem, index) => {
+            if (index === position) {
+                return { ...scheduleItem, [field]: value }
+            }
+
+            return scheduleItem
+        })
+
+        setScheduleItems(updatedScheduleItems)
     }
 
     return (
@@ -128,28 +160,40 @@ function TeacherFrom() {
                         <button type="button" onClick={addNewScheduleItem}>+ Add new</button>
                         </legend>
 
-                        {scheduleItems.map(scheduleItem => {
+                        {scheduleItems.map((scheduleItem, index) => {
                             return (
                                 <div key={scheduleItem.week_day} className="schedule-item">
                                     <Select
-                                        name="subject"
-                                        label="Subject"
-                                        value={subject}
+                                        name="week_day"
+                                        label="Week day"
+                                        value={scheduleItem.week_day}
+                                        onChange={e => setScheduleItemValue(index, 'week_day', e.target.value)}
                                         options={[
-                                            { value: 'Art', label: 'Art' },
-                                            { value: 'Biology', label: 'Biology' },
-                                            { value: 'Physics', label: 'Physics' },
-                                            { value: 'Geography', label: 'Geography' },
-                                            { value: 'Math', label: 'Math' },
-                                            { value: 'Chemistry', label: 'Chemistry' },
-                                            { value: 'History', label: 'History' },
-                                            { value: 'English', label: 'English' }
+                                            { value: '0', label: 'Sunday' },
+                                            { value: '1', label: 'Monday' },
+                                            { value: '2', label: 'Tuesday' },
+                                            { value: '3', label: 'Wednesday' },
+                                            { value: '4', label: 'Thursday' },
+                                            { value: '5', label: 'Friday' },
+                                            { value: '6', label: 'Saturday' }
                                         ]}
                                     >
                                     </Select>
 
-                                    <Input name="from" label="From" type="time" />
-                                    <Input name="to" label="to" type="time" />
+                                    <Input
+                                        name="from"
+                                        label="From"
+                                        type="time"
+                                        value={scheduleItem.from}
+                                        onChange={e => setScheduleItemValue(index, 'from', e.target.value)}
+                                    />
+                                    <Input
+                                        name="to"
+                                        label="to"
+                                        type="time"
+                                        value={scheduleItem.to}
+                                        onChange={e => setScheduleItemValue(index, 'to', e.target.value)}
+                                    />
                                 </div>
                             )
                         })}
